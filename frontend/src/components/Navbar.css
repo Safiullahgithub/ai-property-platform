@@ -1,0 +1,84 @@
+.navbar {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 200;
+  padding: 18px 0;
+  transition: all 0.4s ease;
+}
+.navbar.scrolled {
+  padding: 12px 0;
+  background: rgba(13,13,13,0.85);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border);
+}
+[data-theme="light"] .navbar.scrolled {
+  background: rgba(250,248,245,0.88);
+}
+
+.nav-inner {
+  max-width: 1180px; margin: 0 auto; padding: 0 28px;
+  display: flex; align-items: center; justify-content: space-between; gap: 20px;
+}
+
+/* Logo */
+.nav-logo {
+  display: flex; align-items: center; gap: 10px;
+  background: none; border: none; cursor: pointer;
+  text-decoration: none;
+}
+.logo-mark {
+  width: 36px; height: 36px;
+  background: var(--pink-dim);
+  border: 1px solid var(--pink-border);
+  border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  color: var(--pink);
+  transition: all 0.3s;
+}
+.nav-logo:hover .logo-mark { background: var(--pink); color: #fff; }
+.logo-text {
+  font-family: var(--f-display);
+  font-size: 20px; font-weight: 800;
+  color: var(--text);
+  letter-spacing: -0.02em;
+}
+
+/* Links */
+.nav-links { display: flex; gap: 2px; }
+.nav-link {
+  background: none; border: none; cursor: pointer;
+  font-family: var(--f-body); font-size: 14px; font-weight: 500;
+  color: var(--text2);
+  padding: 8px 16px; border-radius: var(--radius-pill);
+  transition: all 0.2s;
+}
+.nav-link:hover { color: var(--text); background: var(--surface); }
+
+/* Right */
+.nav-right { display: flex; align-items: center; gap: 10px; }
+
+.theme-toggle {
+  width: 38px; height: 38px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-pill);
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; color: var(--text2);
+  transition: all 0.25s;
+}
+.theme-toggle:hover { border-color: var(--border2); color: var(--text); }
+
+.nav-cta {
+  display: flex; align-items: center; gap: 8px;
+  padding: 10px 20px;
+  background: var(--pink); color: #fff;
+  font-family: var(--f-body); font-size: 13px; font-weight: 700;
+  border: none; border-radius: var(--radius-pill);
+  cursor: pointer;
+  transition: all 0.3s;
+}
+.nav-cta:hover { background: var(--pink-light); transform: translateY(-1px); box-shadow: var(--shadow-pink); }
+
+@media (max-width: 768px) {
+  .nav-links { display: none; }
+  .nav-inner { padding: 0 18px; }
+}

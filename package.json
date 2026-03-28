@@ -1,0 +1,16 @@
+{
+  "name": "propai-v2",
+  "version": "2.0.0",
+  "description": "Web-Based AI Property Marketing Platform — Project-2026S1_24",
+  "private": true,
+  "scripts": {
+    "install:all": "npm install --prefix frontend && npm install --prefix backend",
+    "dev": "concurrently --names \"BACKEND,FRONTEND\" --prefix-colors \"magenta,cyan\" \"npm run dev --prefix backend\" \"npm start --prefix frontend\"",
+    "start:backend": "npm run dev --prefix backend",
+    "start:frontend": "npm start --prefix frontend",
+    "build": "npm run build --prefix frontend"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}
