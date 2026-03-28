@@ -118,8 +118,8 @@ git remote add origin https://github.com/YOUR_USERNAME/propai-v2.git
 git push -u origin main
 ```
 
-### Frontend → Vercel (Free)
-1. Go to https://vercel.com → Import project
+### Frontend → netlify(Free)
+1. import or push to netlify for deployment
 2. Root Directory: `frontend`
 3. Framework: Create React App
 4. Deploy ✅
