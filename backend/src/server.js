@@ -11,12 +11,16 @@ const propertyRoutes = require('./routes/property');
 const app = express();
 const PORT = process.env.PORT || 5000;
 
+// Configure proxy behavior for rate limiting (Heroku/Nginx etc.)
+const trustProxy = process.env.TRUST_PROXY === '1' || process.env.NODE_ENV === 'production';
+app.set('trust proxy', trustProxy);
+
 app.use(helmet({ crossOriginResourcePolicy: { policy: 'cross-origin' } }));
 app.use(morgan('dev'));
 app.use(cors({ origin: process.env.FRONTEND_URL || 'http://localhost:3000', credentials: true }));
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ extended: true, limit: '50mb' }));
-app.use('/api/', rateLimit({ windowMs: 15 * 60 * 1000, max: 60 }));
+app.use('/api/', rateLimit({ windowMs: 15 * 60 * 1000, max: 60, xForwardedForHeader: trustProxy }));
 app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 
 app.get('/api/health', (req, res) => res.json({
