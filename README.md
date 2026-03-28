@@ -104,6 +104,25 @@ propai-v2/
 └── README.md
 ```
 
+## 📸 Project Screenshots
+
+### 🖥️ Dashboard
+![Dashboard](s1.png)
+
+### 📊 Property Listings
+![Listings](s2.png)
+
+### 🤖 AI Features
+![AI](s3.png)
+
+### 📈 Analytics
+![Analytics](s4.png)
+
+### 🔍 Search Functionality
+![Search](s5.png)
+
+### ⚙️ Backend / System
+![System](s6.png)
 ---
 
 ## ☁️ Deploy to GitHub + Vercel + Render
