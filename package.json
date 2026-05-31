@@ -5,7 +5,8 @@
   "private": true,
   "scripts": {
     "install:all": "npm install --prefix frontend && npm install --prefix backend",
-    "dev": "concurrently --names \"BACKEND,FRONTEND\" --prefix-colors \"magenta,cyan\" \"npm run dev --prefix backend\" \"npm start --prefix frontend\"",
+    "start": "concurrently --names \"BACKEND,FRONTEND\" --prefix-colors \"magenta,cyan\" \"cd backend && npm run dev\" \"cd frontend && npm start\"",
+    "dev": "concurrently --names \"BACKEND,FRONTEND\" --prefix-colors \"magenta,cyan\" \"cd backend && npm run dev\" \"cd frontend && npm start\"",
     "start:backend": "npm run dev --prefix backend",
     "start:frontend": "npm start --prefix frontend",
     "build": "npm run build --prefix frontend"

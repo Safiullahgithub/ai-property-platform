@@ -38,9 +38,13 @@ async function generatePropertyContent(propertyData, imageAnalysis) {
 
 // ─── Prompt Builder ───────────────────────────────────────────────────────────
 function buildPrompt(pd, ia) {
+  const propertyType = pd.propertyType || ia?.predictedPropertyType || 'Residential';
+  const bedrooms = pd.bedrooms || ia?.predictedBedrooms || '?';
+  const location = pd.location || ia?.predictedLocation || 'Prime Location';
+
   return `You are an expert real estate copywriter. Generate premium property marketing content.
 
-PROPERTY: ${pd.propertyType || 'Residential'} | ${pd.bedrooms || '?'} bed | ${pd.bathrooms || '?'} bath | ${pd.price ? '$' + pd.price : 'POA'} | ${pd.location || 'Prime Location'} | ${pd.size ? pd.size + ' sqft' : ''} 
+PROPERTY: ${propertyType} | ${bedrooms} bed | ${pd.bathrooms || '?'} bath | ${pd.price ? '$' + pd.price : 'POA'} | ${location} | ${pd.size ? pd.size + ' sqft' : ''} 
 IMAGE ANALYSIS: ${ia?.caption || ''} | Style: ${ia?.style || 'Modern'} | Condition: ${ia?.condition || 'Excellent'}
 NOTES: ${pd.notes || 'None'}
 
@@ -144,7 +148,7 @@ async function analyzeAnthropic(imagePath) {
       role: 'user',
       content: [
         { type: 'image', source: { type: 'base64', media_type: mt, data: b64 } },
-        { type: 'text', text: 'Analyse this property image. Return ONLY raw JSON (no markdown): {"roomType":"...","condition":"Excellent|Good|Fair","style":"...","lighting":"Bright|Well-lit|Moderate|Dim","keyFeatures":["..."],"atmosphere":"...","estimatedSize":"Small|Medium|Large|Spacious","standoutElement":"...","caption":"one sentence describing the space"}' }
+        { type: 'text', text: 'Analyse this property image. Return ONLY raw JSON (no markdown): {"roomType":"...","condition":"Excellent|Good|Fair","style":"...","lighting":"Bright|Well-lit|Moderate|Dim","keyFeatures":["..."],"atmosphere":"...","estimatedSize":"Small|Medium|Large|Spacious","standoutElement":"...","caption":"one sentence describing the space","predictedPropertyType":"House|Apartment|Villa|Townhouse|Studio|Penthouse|Commercial|Land","predictedBedrooms":"1|2|3|4|5+ or numeric","predictedLocation":"city, neighbourhood, or blank if unknown"}' }
       ]
     }]
   });
@@ -181,7 +185,7 @@ async function analyzeOpenAI(imagePath) {
       role: 'user',
       content: [
         { type: 'image_url', image_url: { url: `data:${mt};base64,${b64}` } },
-        { type: 'text', text: 'Analyse this property image. Return ONLY raw JSON (no markdown): {"roomType":"...","condition":"...","style":"...","lighting":"...","keyFeatures":["..."],"atmosphere":"...","estimatedSize":"...","standoutElement":"...","caption":"..."}' }
+        { type: 'text', text: 'Analyse this property image. Return ONLY raw JSON (no markdown): {"roomType":"...","condition":"Excellent|Good|Fair","style":"...","lighting":"Bright|Well-lit|Moderate|Dim","keyFeatures":["..."],"atmosphere":"...","estimatedSize":"Small|Medium|Large|Spacious","standoutElement":"...","caption":"one sentence describing the space","predictedPropertyType":"House|Apartment|Villa|Townhouse|Studio|Penthouse|Commercial|Land","predictedBedrooms":"1|2|3|4|5+ or numeric","predictedLocation":"city, neighbourhood, or blank if unknown"}' }
       ]
     }]
   });
@@ -210,6 +214,20 @@ function enrichCaption(caption) {
     : lower.includes('dining') ? 'Dining Room'
     : 'Living Room';
 
+  const propertyType = lower.includes('apartment') ? 'Apartment'
+    : lower.includes('villa') ? 'Villa'
+    : lower.includes('townhouse') ? 'Townhouse'
+    : lower.includes('studio') ? 'Studio'
+    : lower.includes('penthouse') ? 'Penthouse'
+    : lower.includes('commercial') ? 'Commercial'
+    : lower.includes('land') ? 'Land'
+    : 'House';
+
+  const bedroomMatch = caption.match(/(\d+)\s*-?\s*(?:bedroom|bedrooms|beds|bd\b)|(?:one|two|three|four|five|six|seven|eight|nine|ten)\s+(?:bedroom|bedrooms|beds)/i);
+  const bedroomWords = caption.match(/\b(one|two|three|four|five|six|seven|eight|nine|ten)\b/i);
+  const parsedBedrooms = bedroomMatch ? (parseInt(bedroomMatch[1], 10) || (bedroomWords && wordsToNumber(bedroomWords[1])) || null) : null;
+  const predictedBedrooms = parsedBedrooms || (lower.includes('studio') ? 1 : null);
+
   return {
     roomType,
     condition: 'Excellent',
@@ -220,7 +238,18 @@ function enrichCaption(caption) {
     estimatedSize: 'Large',
     standoutElement: caption,
     caption,
+    predictedPropertyType: propertyType,
+    predictedBedrooms,
+    predictedLocation: '',
   };
+}
+
+function wordsToNumber(word) {
+  const map = {
+    one: 1, two: 2, three: 3, four: 4, five: 5,
+    six: 6, seven: 7, eight: 8, nine: 9, ten: 10,
+  };
+  return map[word.toLowerCase()] || null;
 }
 
 function mockImageAnalysis() {

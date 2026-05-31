@@ -10,8 +10,10 @@ export default function GenerateSection({ onResult }) {
   const [image, setImage] = useState(null);
   const [preview, setPreview] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [analyzing, setAnalyzing] = useState(false);
   const [step, setStep] = useState(0);
   const [isDemo, setIsDemo] = useState(false);
+  const [analysis, setAnalysis] = useState(null);
   const [form, setForm] = useState({
     propertyType: 'House', bedrooms: '', bathrooms: '',
     price: '', location: '', size: '', notes: '',
@@ -36,7 +38,43 @@ export default function GenerateSection({ onResult }) {
     setImage(f);
     setPreview(URL.createObjectURL(f));
     toast.success('Image ready!');
+    runImageAnalysis(f);
   }, []);
+
+  const runImageAnalysis = async file => {
+    if (!file) return;
+    setAnalyzing(true);
+    setAnalysis(null);
+
+    try {
+      const fd = new FormData();
+      fd.append('image', file);
+      const res = await axios.post('/api/property/analyze', fd, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+        timeout: 60000,
+      });
+      const analysisData = res.data;
+      setAnalysis(analysisData);
+
+      setForm(prev => ({
+        ...prev,
+        propertyType: (!prev.propertyType || prev.propertyType === 'House') && analysisData.predictedPropertyType
+          ? analysisData.predictedPropertyType
+          : prev.propertyType,
+        bedrooms: !prev.bedrooms && analysisData.predictedBedrooms
+          ? String(analysisData.predictedBedrooms)
+          : prev.bedrooms,
+        location: !prev.location && analysisData.predictedLocation
+          ? analysisData.predictedLocation
+          : prev.location,
+      }));
+    } catch (err) {
+      const msg = err.response?.data?.error || 'Image analysis failed.';
+      toast.error(msg);
+    } finally {
+      setAnalyzing(false);
+    }
+  };
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
@@ -139,15 +177,25 @@ export default function GenerateSection({ onResult }) {
                   <p className="dz-sub">or click to browse · JPEG, PNG, WebP · max 10 MB</p>
                 </div>
               ) : (
-                <div className="img-preview">
-                  <img src={preview} alt="Preview" />
-                  <div className="img-overlay">
-                    <button onClick={() => { setImage(null); URL.revokeObjectURL(preview); setPreview(null); }}>
-                      ✕ Remove
-                    </button>
+                <>
+                  <div className="img-preview">
+                    <img src={preview} alt="Preview" />
+                    <div className="img-overlay">
+                      <button onClick={() => { setImage(null); URL.revokeObjectURL(preview); setPreview(null); setAnalysis(null); }}>
+                        ✕ Remove
+                      </button>
+                    </div>
+                    <div className="img-ready">✓ Ready</div>
                   </div>
-                  <div className="img-ready">✓ Ready</div>
-                </div>
+                  {analysis?.predictedPropertyType && (
+                    <div className="analysis-tag">
+                      Auto-detected: {analysis.predictedPropertyType}
+                      {analysis.predictedBedrooms ? ` · ${analysis.predictedBedrooms} bed` : ''}
+                      {analysis.predictedLocation ? ` · ${analysis.predictedLocation}` : ''}
+                    </div>
+                  )}
+                  {analyzing && <div className="analysis-tag analysis-loading">Analyzing image…</div>}
+                </>
               )}
 
               {/* Tips */}

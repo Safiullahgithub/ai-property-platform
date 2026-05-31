@@ -23,6 +23,31 @@ const upload = multer({
   },
 });
 
+// POST /api/property/analyze  (image metadata prediction)
+router.post('/analyze', upload.single('image'), async (req, res) => {
+  let fp = null;
+  try {
+    if (!req.file) return res.status(400).json({ error: 'Image required.' });
+    fp = req.file.path;
+    const imageAnalysis = await analyzePropertyImage(fp);
+
+    if (fs.existsSync(fp)) fs.unlinkSync(fp);
+    return res.json({
+      success: true,
+      imageAnalysis,
+      predictedPropertyType: imageAnalysis.predictedPropertyType || null,
+      predictedBedrooms: imageAnalysis.predictedBedrooms || null,
+      predictedLocation: imageAnalysis.predictedLocation || null,
+    });
+  } catch (err) {
+    if (fp && fs.existsSync(fp)) try { fs.unlinkSync(fp); } catch (_) {}
+    console.error(err.message);
+    if (err.message?.includes('API key') || err.status === 401)
+      return res.status(401).json({ error: 'Invalid API key. Check your .env file.' });
+    res.status(500).json({ error: err.message || 'Image analysis failed.' });
+  }
+});
+
 // POST /api/property/generate  (real AI)
 router.post('/generate', upload.single('image'), async (req, res) => {
   let fp = null;
@@ -30,14 +55,17 @@ router.post('/generate', upload.single('image'), async (req, res) => {
     if (!req.file) return res.status(400).json({ error: 'Image required.' });
     fp = req.file.path;
 
+    const imageAnalysis = await analyzePropertyImage(fp);
     const pd = {
-      propertyType: req.body.propertyType || 'Residential',
-      bedrooms: req.body.bedrooms, bathrooms: req.body.bathrooms,
-      price: req.body.price, location: req.body.location,
-      size: req.body.size, notes: req.body.notes,
+      propertyType: req.body.propertyType || imageAnalysis.predictedPropertyType || 'Residential',
+      bedrooms: req.body.bedrooms || imageAnalysis.predictedBedrooms || '',
+      bathrooms: req.body.bathrooms,
+      price: req.body.price,
+      location: req.body.location || imageAnalysis.predictedLocation || '',
+      size: req.body.size,
+      notes: req.body.notes,
     };
 
-    const imageAnalysis = await analyzePropertyImage(fp);
     const marketingContent = await generatePropertyContent(pd, imageAnalysis);
 
     if (fs.existsSync(fp)) fs.unlinkSync(fp);
