@@ -11,35 +11,11 @@ const TICKER_ITEMS = [
 ];
 
 export default function HeroSection() {
-  const cursorRef = useRef(null);
-  const blobRef = useRef(null);
-
-  useEffect(() => {
-    const onMove = (e) => {
-      if (cursorRef.current) {
-        cursorRef.current.style.left = e.clientX + 'px';
-        cursorRef.current.style.top = e.clientY + 'px';
-      }
-      if (blobRef.current) {
-        const x = (e.clientX / window.innerWidth) * 100;
-        const y = (e.clientY / window.innerHeight) * 100;
-        blobRef.current.style.background = `radial-gradient(600px at ${x}% ${y}%, rgba(255,77,141,0.14), transparent 60%)`;
-      }
-    };
-    window.addEventListener('mousemove', onMove);
-    return () => window.removeEventListener('mousemove', onMove);
-  }, []);
-
   const scrollToGenerate = () =>
     document.getElementById('generate')?.scrollIntoView({ behavior: 'smooth' });
 
   return (
     <section className="hero" id="hero">
-      {/* Interactive mouse blob */}
-      <div className="hero-blob" ref={blobRef} />
-
-      {/* Cursor dot */}
-      <div className="cursor-dot" ref={cursorRef} />
 
       {/* Grid */}
       <div className="hero-grid" />

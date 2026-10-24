@@ -8,26 +8,6 @@
   padding-top: 90px;
 }
 
-/* Interactive blob */
-.hero-blob {
-  position: absolute; inset: 0;
-  pointer-events: none; z-index: 0;
-  transition: background 0.15s ease;
-}
-
-/* Cursor dot */
-.cursor-dot {
-  position: fixed;
-  width: 8px; height: 8px;
-  background: var(--pink);
-  border-radius: 50%;
-  pointer-events: none; z-index: 9999;
-  transform: translate(-50%, -50%);
-  transition: transform 0.1s ease;
-  mix-blend-mode: normal;
-}
-[data-theme="light"] .cursor-dot { mix-blend-mode: multiply; }
-
 /* Grid */
 .hero-grid {
   position: absolute; inset: 0; pointer-events: none;
