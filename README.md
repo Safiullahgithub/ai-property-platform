@@ -39,7 +39,7 @@ npm run install:all
 ### Step 3 — Set up environment
 ```bash
 cd backend
-cp .env.example .env
+copy .env.example .env
 ```
 Then open `backend/.env` and add your HuggingFace key:
 ```
@@ -49,8 +49,7 @@ HF_API_KEY=hf_your_token_here
 
 ### Step 4 — Run both servers (one command!)
 ```bash
-# From the ROOT folder (propai-v2/)
-cd ..
+# From the project root
 npm run dev
 ```
 

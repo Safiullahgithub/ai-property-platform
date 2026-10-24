@@ -55,11 +55,11 @@
 
 .hero-title {
   font-family: var(--f-display);
-  font-size: clamp(28px, 4vw, 52px);
-  font-weight: 600;
-  line-height: 1.12;
+  font-size: clamp(30px, 3.6vw, 48px);
+  font-weight: 700;
+  line-height: 1.1;
   color: var(--text);
-  letter-spacing: 0;
+  letter-spacing: -0.04em;
 }
 
 .hero-title-em {
@@ -75,9 +75,9 @@
 }
 
 .hero-subtitle {
-  font-size: 17px;
+  font-size: 16px;
   color: var(--text2);
-  line-height: 1.75;
+  line-height: 1.7;
   max-width: 500px;
   font-weight: 400;
 }

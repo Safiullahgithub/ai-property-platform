@@ -10,7 +10,7 @@ import { useScrollReveal } from './hooks/useScrollReveal';
 import './App.css';
 
 export default function App() {
-  const [theme, setTheme] = useState('dark');
+  const [theme, setTheme] = useState('light');
   const [result, setResult] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
 
