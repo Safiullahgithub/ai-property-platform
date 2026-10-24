@@ -126,6 +126,8 @@ propai-v2/
 
 ## ☁️ Deploy to GitHub + Vercel + Render
 
+> Vercel deployment note: the project is configured to build the frontend app from the repository root using the root scripts and the Vercel config file. A fresh commit is required to trigger a new production deployment after an older one is blocked.
+
 ### Push to GitHub
 ```bash
 git init
