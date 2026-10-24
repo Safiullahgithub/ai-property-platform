@@ -4,6 +4,7 @@
   "description": "Web-Based AI Property Marketing Platform — Project-2026S1_24",
   "private": true,
   "scripts": {
+    "install": "npm install --prefix frontend && npm install --prefix backend",
     "install:all": "npm install --prefix frontend && npm install --prefix backend",
     "start": "concurrently --names \"BACKEND,FRONTEND\" --prefix-colors \"magenta,cyan\" \"cd backend && npm run dev\" \"cd frontend && npm start\"",
     "dev": "concurrently --names \"BACKEND,FRONTEND\" --prefix-colors \"magenta,cyan\" \"cd backend && npm run dev\" \"cd frontend && npm start\"",
